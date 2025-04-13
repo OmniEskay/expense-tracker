@@ -131,3 +131,53 @@ function ExpenseTable({ expenses, onDeleteExpense, onSort }) {
     </table>
   );
 }
+
+const INITIAL_EXPENSES = [
+  { id: 1, description: 'Groceries', amount: 55.75, category: 'Food' },
+  { id: 2, description: 'Gasoline', amount: 40.00, category: 'Transport' },
+  { id: 3, description: 'Movie Tickets', amount: 25.50, category: 'Entertainment' },
+  { id: 4, description: 'Coffee Shop', amount: 4.80, category: 'Food' },
+];
+
+function App() {
+  const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
+  const [filterTerm, setFilterTerm] = useState('');
+  const [sortKey, setSortKey] = useState(null);
+
+
+  const handleAddExpense = (newExpense) => {
+    setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
+  };
+
+  const handleDeleteExpense = (idToDelete) => {
+    setExpenses((prevExpenses) =>
+      prevExpenses.filter((expense) => expense.id !== idToDelete)
+    );
+  };
+
+  const handleFilterChange = (term) => {
+    setFilterTerm(term);
+  };
+
+   const handleSort = (key) => {
+    if (sortKey === key) {
+        setSortKey(null);
+    } else {
+        setSortKey(key);
+    }
+  };
+
+  const filteredExpenses = expenses.filter((expense) =>
+    expense.description.toLowerCase().includes(filterTerm.toLowerCase())
+  );
+
+  
+  const sortedAndFilteredExpenses = [...filteredExpenses]; 
+  if (sortKey) {
+    sortedAndFilteredExpenses.sort((a, b) => {
+      
+      const valueA = String(a[sortKey] || '').toLowerCase();
+      const valueB = String(b[sortKey] || '').toLowerCase();
+      return valueA.localeCompare(valueB); 
+    });
+  }
