@@ -74,3 +74,60 @@ function ExpenseForm({ onAddExpense }) {
     </form>
   );
 }
+
+function ExpenseFilter({ filterTerm, onFilterChange }) {
+  return (
+    <div style={{ marginBottom: '15px' }}>
+      <label htmlFor="search">Filter by Description: </label>
+      <input
+        type="search"
+        id="search"
+        placeholder="Search expenses..."
+        value={filterTerm}
+        onChange={(e) => onFilterChange(e.target.value)}
+      />
+    </div>
+  );
+}
+
+function ExpenseTable({ expenses, onDeleteExpense, onSort }) {
+
+  if (!expenses || expenses.length === 0) {
+    return <p>No expenses to display.</p>;
+  }
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <button type="button" onClick={() => onSort('description')}>
+              Description
+            </button>
+          </th>
+          <th>Amount</th> 
+          <th>
+             <button type="button" onClick={() => onSort('category')}>
+               Category
+             </button>
+          </th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {expenses.map((expense) => (
+          <tr key={expense.id}>
+            <td>{expense.description}</td>
+            <td>${expense.amount.toFixed(2)}</td>
+            <td>{expense.category}</td>
+            <td>
+              <button onClick={() => onDeleteExpense(expense.id)}>
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
