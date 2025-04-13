@@ -8,7 +8,7 @@ function ExpenseForm({ onAddExpense }) {
   const [category, setCategory] = useState('');
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault(); 
 
     if (!description || !amount || !category) {
       alert('Please fill in all fields.');
@@ -22,13 +22,13 @@ function ExpenseForm({ onAddExpense }) {
     }
 
     const newExpense = {
-      id: Date.now(), 
+      id: Date.now(),
       description,
       amount: numericAmount,
       category,
     };
 
-    onAddExpense(newExpense); 
+    onAddExpense(newExpense);
 
     setDescription('');
     setAmount('');
@@ -49,20 +49,20 @@ function ExpenseForm({ onAddExpense }) {
         />
       </div>
       <div>
-        <label htmlFor="amount">Amount: </label>
+        <label htmlFor="amount">Amount (KES): </label> 
         <input
           type="number"
           id="amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          min="0.01" 
-          step="0.01" 
+          min="0.01"
+          step="0.01"
           required
         />
       </div>
       <div>
         <label htmlFor="category">Category: </label>
-        <input 
+        <input
           type="text"
           id="category"
           value={category}
@@ -118,7 +118,12 @@ function ExpenseTable({ expenses, onDeleteExpense, onSort }) {
         {expenses.map((expense) => (
           <tr key={expense.id}>
             <td>{expense.description}</td>
-            <td>${expense.amount.toFixed(2)}</td>
+            <td>
+              {expense.amount.toLocaleString('en-KE', {
+                style: 'currency',
+                currency: 'KES',
+              })}
+            </td>
             <td>{expense.category}</td>
             <td>
               <button onClick={() => onDeleteExpense(expense.id)}>
@@ -132,18 +137,19 @@ function ExpenseTable({ expenses, onDeleteExpense, onSort }) {
   );
 }
 
+
+
 const INITIAL_EXPENSES = [
-  { id: 1, description: 'Groceries', amount: 55.75, category: 'Food' },
-  { id: 2, description: 'Gasoline', amount: 40.00, category: 'Transport' },
-  { id: 3, description: 'Movie Tickets', amount: 25.50, category: 'Entertainment' },
-  { id: 4, description: 'Coffee Shop', amount: 4.80, category: 'Food' },
+  { id: 1, description: 'Groceries (Naivas)', amount: 3550.75, category: 'Food' },
+  { id: 2, description: 'Petrol (Total)', amount: 5000.00, category: 'Transport' },
+  { id: 3, description: 'Movie Tickets (Century Cinemax)', amount: 1200.00, category: 'Entertainment' },
+  { id: 4, description: 'Coffee (Java House)', amount: 450.00, category: 'Food' },
 ];
 
 function App() {
   const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
   const [filterTerm, setFilterTerm] = useState('');
   const [sortKey, setSortKey] = useState(null);
-
 
   const handleAddExpense = (newExpense) => {
     setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
@@ -171,13 +177,32 @@ function App() {
     expense.description.toLowerCase().includes(filterTerm.toLowerCase())
   );
 
-  
-  const sortedAndFilteredExpenses = [...filteredExpenses]; 
+  const sortedAndFilteredExpenses = [...filteredExpenses];
   if (sortKey) {
     sortedAndFilteredExpenses.sort((a, b) => {
-      
       const valueA = String(a[sortKey] || '').toLowerCase();
       const valueB = String(b[sortKey] || '').toLowerCase();
-      return valueA.localeCompare(valueB); 
+      return valueA.localeCompare(valueB);
     });
   }
+
+  return (
+    <div className="App">
+      <h1>Expense Tracker</h1>
+      <ExpenseForm onAddExpense={handleAddExpense} />
+      <hr />
+      <h2>My Expenses</h2>
+      <ExpenseFilter
+        filterTerm={filterTerm}
+        onFilterChange={handleFilterChange}
+      />
+      <ExpenseTable
+        expenses={sortedAndFilteredExpenses}
+        onDeleteExpense={handleDeleteExpense}
+        onSort={handleSort}
+      />
+    </div>
+  );
+}
+
+export default App;
